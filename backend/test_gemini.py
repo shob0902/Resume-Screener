@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-genai.configure(api_key=os.getenv("AIzaSyDbMbvZazMxfUmqs_bniD579i1cdi-47i0"))
+genai.configure(api_key=os.getenv("gemini api key"))
 
 # List all available models
 for model in genai.list_models():
