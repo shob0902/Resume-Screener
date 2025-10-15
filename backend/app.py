@@ -5,11 +5,10 @@ from typing import List
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-import fitz  # PyMuPDF
+import fitz 
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# --- Database setup ---
 DATABASE_URL = "sqlite:///resumes.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -32,8 +31,6 @@ class Resume(Base):
     justification = Column(String)
 
 Base.metadata.create_all(bind=engine)
-
-# --- PDF parsing ---
 def extract_text_from_pdf(pdf_path):
     """Extract text from a PDF using PyMuPDF (fitz).
 
@@ -52,14 +49,12 @@ def extract_text_from_pdf(pdf_path):
     except Exception as e:
         raise RuntimeError(f"PDF extraction failed: {e}")
 
-# --- Gemini integration ---
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 # Example: list models (for test)
 def list_gemini_models():
     return [m.name for m in genai.list_models()]
 
-# --- FastAPI app ---
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -84,7 +79,6 @@ async def batch_upload(files: List[UploadFile] = File(...), db: Session = Depend
         with open(path, "wb") as f:
             f.write(await file.read())
         text = extract_text_from_pdf(path)
-        # Dummy parse: just store filename and text length
         resume = Resume(filename=file.filename, candidate_name="", email="", phone="", skills="", skills_score=0, experience_score=0, education_score=0, overall_score=0, strengths="", gaps="", justification="")
         db.add(resume)
         db.commit()
@@ -94,7 +88,6 @@ async def batch_upload(files: List[UploadFile] = File(...), db: Session = Depend
 
 @app.post("/match")
 async def match(job_description: str = Form(...), db: Session = Depends(get_db)):
-    # Dummy match: return all resumes with random scores
     import random
     resumes = db.query(Resume).all()
     shortlisted = []
@@ -124,7 +117,6 @@ async def match(job_description: str = Form(...), db: Session = Depends(get_db))
 def get_models():
     return {"models": list_gemini_models()}
 
-# --- Utility: reset database ---
 @app.post("/reset-db")
 def reset_db():
     db_path = "resumes.db"
@@ -134,7 +126,6 @@ def reset_db():
     return {"status": "reset"}
 
 
-# --- Backwards-compatibility / utility scripts moved from separate files ---
 def reset_database_script():
     """Run the reset database routine from a script context (prints progress)."""
     db_path = "resumes.db"
@@ -142,7 +133,6 @@ def reset_database_script():
         os.remove(db_path)
         print(f"✓ Deleted old database: {db_path}")
 
-    # Recreate schema
     Base.metadata.create_all(bind=engine)
     print("✓ Created new database with updated schema")
     print("✓ Database reset complete!")
@@ -166,12 +156,10 @@ def list_gemini_models_for_cli():
             if hasattr(model, 'supported_generation_methods') and 'generateContent' in model.supported_generation_methods:
                 print(model.name)
         except Exception:
-            # defensive: some model objects may not have the same schema
             continue
 
 
 if __name__ == '__main__':
-    # Allow basic script usage: python app.py reset-db | test-gemini
     import sys
     if len(sys.argv) > 1:
         cmd = sys.argv[1].lower()
@@ -182,4 +170,3 @@ if __name__ == '__main__':
             list_gemini_models_for_cli()
             sys.exit(0)
     print('No CLI command provided. Start the FastAPI server with: uvicorn app:app --reload')
-
