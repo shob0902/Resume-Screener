@@ -7,7 +7,7 @@ from datetime import datetime
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
-from resume_parser import extract_text_from_pdf
+from app import extract_text_from_pdf
 from llm_matcher import extract_and_match_raw_text
 from database import init_db, get_db, Resume
 
