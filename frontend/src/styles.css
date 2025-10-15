@@ -1,0 +1,124 @@
+:root{
+	--accent:#039d9a; /* user requested shade */
+	--bg:#ffffff; /* page background */
+	--card:#ffffff;
+	--muted:#6b7280;
+}
+/* Load slab-serif fonts for headings: Arvo and Sreda (fallback to serif) */
+@import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400&family=Sreda:wght@400;700&display=swap');
+*{box-sizing:border-box}
+body{ font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; color:#0f172a }
+
+/* Apply slab-serif fonts to headings on key pages */
+.container h1, .container h2, .container h3, .container h4 {
+	font-family: 'Arvo', 'Sreda', Georgia, 'Times New Roman', serif;
+	letter-spacing: -0.01em;
+}
+
+/* Typing intro title styles */
+.typing-title{ display:inline-block; font-size:26px; margin:0 }
+.typing-title--small{ font-size:28px }
+.typing-cursor{ display:inline-block; margin-left:6px; color:var(--accent); animation: blink 900ms steps(1) infinite }
+@keyframes blink{ 50%{ opacity:0 } }
+
+/* Slightly heavier weight for main titles */
+.container h1, .container h2 { font-weight:700 }
+.container h3, .container h4 { font-weight:600 }
+
+/* Page background image (place your provided image at frontend/public/bg.jpg) */
+html,body,#root{ height:100% }
+body{
+	background-color: var(--bg);
+}
+
+/* Slightly transparent site wrapper so cards stand out */
+.app > main, .container{ position:relative }
+.container:before{
+	content:''; position:absolute; inset:0; background:transparent; pointer-events:none;
+}
+.topbar{ display:flex; align-items:center; justify-content:center; padding:12px 24px; background: rgba(255,255,255,0.18); border-radius:12px; margin:18px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); min-height:72px }
+.topbar .brand{ font-weight:700; color:var(--accent); font-size:18px }
+.topbar a{ color:#0f172a; text-decoration:none; margin-left:12px }
+.container{ max-width:1100px; margin:28px auto; padding:16px }
+.card{ 
+	background: var(--card); 
+	padding:20px; 
+	border-radius:12px; 
+	box-shadow:0 8px 30px rgba(15,23,42,0.06); 
+	margin-bottom:18px; 
+	border: 1px solid rgba(0,0,0,0.04);
+}
+.landing-cards{ display:flex; gap:18px; align-items:flex-start }
+.landing-cards .card{ flex:1 }
+@media (max-width:900px){ .landing-cards{ flex-direction:column } }
+@media (max-width:560px){ .typing-title{ font-size:28px } }
+.btn{ background: var(--accent); color:white; padding:10px 16px; border-radius:10px; border:none; cursor:pointer; font-weight:600 }
+.btn.secondary{ background: transparent; color:var(--accent); border:1px solid rgba(3,157,154,0.12) }
+.btn-label{ display:inline-block; background:var(--accent); color:white; padding:8px 14px; border-radius:8px; cursor:pointer; font-weight:600 }
+.btn-label:hover{ filter:brightness(0.95) }
+.input-hidden{ display:none }
+.muted{ color:var(--muted) }
+.file-list{ margin-top:8px }
+.resume-item{ display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f1f5f9 }
+.score{ font-weight:800; color:var(--accent); font-size:18px }
+
+/* Responsive grid for results */
+.grid{ display:grid; grid-template-columns: 1fr 360px; gap:16px }
+@media (max-width: 900px){ .grid{ grid-template-columns: 1fr; padding:8px } }
+
+/* Page entrance animation */
+.page-enter{ animation: pageIn 420ms ease both }
+@keyframes pageIn{
+	from{ opacity:0; transform: translateY(8px) scale(0.995) }
+	to{ opacity:1; transform: translateY(0) scale(1) }
+}
+
+/* Stagger cards inside a page-enter container for a pleasant entrance */
+.page-enter .card{ opacity:0; transform: translateY(8px); animation: cardIn 360ms ease forwards }
+.page-enter .card:nth-child(1){ animation-delay: 80ms }
+.page-enter .card:nth-child(2){ animation-delay: 160ms }
+.page-enter .card:nth-child(3){ animation-delay: 240ms }
+.page-enter .card:nth-child(4){ animation-delay: 320ms }
+@keyframes cardIn{
+  to{ opacity:1; transform: translateY(0) }
+}
+
+/* Full screen overlay for processing animation */
+.screen-overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(255, 255, 255, 0.06); z-index:3000 }
+.screen-overlay dotlottie-wc{ width:300px !important; height:300px !important; border-radius:12px }
+
+/* Splash overlay */
+.splash-overlay{ position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background: #ffffff; z-index:2000 }
+.splash-overlay dotlottie-wc{ border-radius:18px; background:transparent }
+
+.landing-animation{ display:flex; justify-content:center; align-items:center; margin:12px 0; /* allow natural height */ min-height:0 }
+/* ensure children are centered and the dotlottie element uses the intended small size */
+.landing-animation > *{ display:flex; align-items:center; justify-content:center }
+.landing-animation dotlottie-wc{ display:block; width:100px; height:100px; max-width:100%; box-sizing:border-box }
+/* debug hint - visible outline so missing assets are obvious during dev */
+.landing-animation.debug{ outline: 2px dashed rgba(3,157,154,0.25); background: rgba(3,157,154,0.02); }
+
+/* when the dotlottie element is mounted, ensure it is visible */
+.dotlottie-loaded, .dotlottie-loaded > dotlottie-wc{ display:block !important; opacity:1 !important }
+
+.landing-hero{ display:flex; gap:18px; align-items:center }
+.hero-left{ flex:1 }
+.hero-right{ width:340px; display:flex; justify-content:center }
+@media (max-width:800px){
+	.landing-hero{ flex-direction:column }
+	.hero-right{ width:100% }
+}
+
+/* form styles */
+label{ display:block; font-weight:600; margin-bottom:8px }
+input[type=file]{ margin-top:6px }
+textarea{ font-family:inherit; padding:10px; border-radius:8px; border:1px solid rgba(15,23,42,0.06); background: rgba(255,255,255,0.8); }
+
+/* Apply frosted style to other common containers to match the design */
+.container .card, aside .card { background: rgba(255,255,255,0.65); border: 1px solid rgba(255,255,255,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+.top-actions{ display:flex; gap:8px; align-items:center }
+
+/* loader icon in header */
+.loader-icon{ width:38px; height:38px; border-radius:8px; object-fit:cover; }
+
