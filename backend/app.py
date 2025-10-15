@@ -31,20 +31,13 @@ class Resume(Base):
     justification = Column(String)
 
 Base.metadata.create_all(bind=engine)
-def extract_text_from_pdf(pdf_path):
-    """Extract text from a PDF using PyMuPDF (fitz).
-
-    Closes the document and returns stripped text. Raises RuntimeError on failure.
-    """
+def extract_text_from_pdf(pdf_path: str) -> str:
     try:
         doc = fitz.open(pdf_path)
         text = ""
         for page in doc:
             text += page.get_text()
-        try:
-            doc.close()
-        except Exception:
-            pass
+        doc.close()
         return text.strip()
     except Exception as e:
         raise RuntimeError(f"PDF extraction failed: {e}")
