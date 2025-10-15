@@ -31,16 +31,17 @@ class Resume(Base):
     justification = Column(String)
 
 Base.metadata.create_all(bind=engine)
-def extract_text_from_pdf(pdf_path: str) -> str:
+def parse_pdf_text(file_path: str) -> str:
     try:
-        doc = fitz.open(pdf_path)
-        text = ""
-        for page in doc:
-            text += page.get_text()
-        doc.close()
-        return text.strip()
-    except Exception as e:
-        raise RuntimeError(f"PDF extraction failed: {e}")
+        document = fitz.open(file_path)
+        content = ""
+        for sheet in document:
+            content += sheet.get_text()
+        document.close()
+        return content.strip()
+    except Exception as error:
+        raise RuntimeError(f"Failed to parse PDF: {error}")
+
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
