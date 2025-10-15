@@ -15,74 +15,75 @@ def analyze_resume_fit(resume_text, job_description):
 
     # Construct prompt for Gemini
     analysis_prompt = f"""
-    You are a professional technical recruiter and hiring specialist.
-    Examine the following resume text and job description.
-    Extract structured data, evaluate candidate-job fit, and output a strictly valid JSON result.
+        analysis_prompt = f"""
+    You are an experienced recruiter and talent evaluator.
+    Carefully review the following candidate resume and job description.
+    Extract structured insights, assess compatibility, and respond with a valid JSON report only.
 
     ---
 
-    **Resume (Raw):**
+    **Candidate Resume (Text):**
     {resume_text}
 
-    **Job Description:**
+    **Job Description Provided:**
     {job_description}
 
     ---
 
-    ### TASKS TO PERFORM
+    ### TASK OBJECTIVES
 
-    1. **Data Extraction**
-       - *Skills:* Extract all relevant technical and soft skills.
-       - *Experience:* List job titles, companies, durations, and main responsibilities.
-       - *Education:* Mention degrees, institutions, majors, and certifications.
+    1. **Information Extraction**
+       - Identify all technical, analytical, and interpersonal skills.
+       - Summarize professional experience: roles, organizations, timelines, and key contributions.
+       - Include educational background with degrees, institutions, majors, and certifications.
 
-    2. **Matching & Scoring**
-       - Assign numerical scores (0–10) for:
+    2. **Relevance Evaluation & Scoring**
+       - Assign numeric values between 0–10 for:
          - skills_score
          - experience_score
          - education_score
          - overall_score
-       - Ensure semantic understanding, not just keyword matching.
+       - Focus on contextual understanding rather than mere keyword overlap.
 
-    3. **Detailed Review**
-       - List strengths and gaps.
-       - Write a short justification.
-       - Provide a recommendation: Highly Recommended / Recommended / Maybe / Not Recommended.
+    3. **Comprehensive Review**
+       - Highlight main strengths and improvement areas.
+       - Give a concise justification for the evaluation.
+       - Conclude with a hiring recommendation: Highly Recommended / Recommended / Maybe / Not Recommended.
 
     ---
 
-    ### OUTPUT FORMAT
+    ### EXPECTED OUTPUT
 
-    Respond ONLY with JSON using this exact schema:
+    Provide strictly JSON output following this schema:
     {{
-      "name": "Candidate Full Name or 'Not Found'",
+      "name": "Full Candidate Name or 'Not Found'",
       "email": "email@example.com or 'Not Found'",
       "phone": "+1234567890 or 'Not Found'",
       "skills": ["Python", "React", "Machine Learning", "AWS", "Communication"],
-      "experience": "5 years as Software Engineer at TechCorp (2019–2024): Developed ML pipeline processing 1M+ records daily.",
-      "education": "B.S. Computer Science, MIT, 2017. AWS Solutions Architect Certification, 2022.",
+      "experience": "Worked as Software Engineer at TechCorp (2019–2024): Built scalable ML pipelines. Prior role as Data Analyst at StartupXYZ (2017–2019).",
+      "education": "B.Tech in Computer Science, MIT, 2017; AWS Solutions Architect Certificate, 2022.",
       "overall_score": 8.3,
       "skills_score": 8.5,
       "experience_score": 8.0,
       "education_score": 7.5,
       "strengths": [
-        "Strong expertise in Python and ML frameworks",
-        "Proven experience with scalable data systems",
-        "Relevant cloud computing exposure"
+        "Strong Python and ML background",
+        "Hands-on cloud experience",
+        "Good match for listed technologies"
       ],
       "gaps": [
         "Missing Kubernetes experience",
         "Limited leadership exposure"
       ],
-      "justification": "The candidate demonstrates strong alignment in technical and cloud skills, with moderate leadership exposure gaps.",
+      "justification": "Candidate aligns well with core technical requirements, though lacks some management and containerization experience.",
       "recommendation": "Recommended"
     }}
 
-    ### RULES
-    - Return plain JSON (no markdown or commentary)
-    - Use floats for all scores
-    - Missing values should be 'Not Found' or []
-    - Be deterministic in scoring
+    ### IMPORTANT GUIDELINES
+    - Return *only* the JSON (no markdown, quotes, or comments)
+    - All numerical values must be floats (e.g., 8.0)
+    - If any data is unavailable, use 'Not Found' or an empty array []
+    - Maintain logical, consistent scoring throughout
     """
 
     try:
