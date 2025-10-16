@@ -43,15 +43,7 @@ Base.metadata.create_all(bind=engine)
 def safe_filename(name: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]", "_", name)
 
-def parse_pdf_text(file_path: str) -> str:
-    try:
-        text_chunks = []
-        with fitz.open(file_path) as doc:
-            for page in doc:
-                text_chunks.append(page.get_text(sort=True))
-        return "\n".join(text_chunks).strip()
-    except Exception as error:
-        raise RuntimeError(f"Failed to parse PDF: {error}")
+
 
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 PHONE_RE = re.compile(r"\+?\d[\d\s().-]{7,}\d")
